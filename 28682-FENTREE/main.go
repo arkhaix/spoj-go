@@ -2,66 +2,54 @@ package main
 
 import "fmt"
 
-// Segment tree
-type node struct {
-	left       *node
-	right      *node
-	parent     *node
-	value      int64
-	leftIndex  int
-	rightIndex int
+// Fenwick tree
+type fentree struct {
+	tree []int64
 }
 
-func build(arr []int64, left int, right int, parent *node) *node {
-	n := node{left: nil, right: nil, parent: parent, value: 0, leftIndex: left, rightIndex: right}
+func build(arr []int64) *fentree {
+	numElements := len(arr)
 
-	for i := left; i <= right; i++ {
-		n.value += arr[i]
+	t := fentree{}
+	t.tree = make([]int64, numElements)
+
+	for i := 0; i < numElements; i++ {
+		t.update(i, arr[i])
 	}
 
-	if right-left > 0 {
-		mid := (left + right) / 2
-		n.left = build(arr, left, mid, &n)
-		n.right = build(arr, mid+1, right, &n)
-	}
-
-	return &n
+	return &t
 }
 
-func query(left int, right int, n *node) int64 {
-	if n == nil {
-		return 0
+func (t *fentree) update(index int, value int64) {
+	n := len(t.tree)
+	for i := index; i < n; i |= i + 1 {
+		t.tree[i] += value
 	}
-	if left > n.rightIndex || right < n.leftIndex {
-		return 0
-	}
-	if n.leftIndex >= left && n.rightIndex <= right {
-		return n.value
-	}
-	return query(left, right, n.left) + query(left, right, n.right)
 }
 
-func update(index int, value int64, n *node) {
-	if n == nil {
-		return
+func (t *fentree) query(left int, right int) int64 {
+	return t.sum(right) - t.sum(left-1)
+}
+
+func (t *fentree) sum(index int) int64 {
+	var res int64
+	for index > 0 {
+		res += t.tree[index]
+		index &= index + 1
+		index = index - 1
 	}
-	if index < n.leftIndex || index > n.rightIndex {
-		return
-	}
-	n.value += value
-	update(index, value, n.left)
-	update(index, value, n.right)
+	return res
 }
 
 func main() {
 	var numElements int
 	fmt.Scan(&numElements)
-	arr := make([]int64, numElements)
-	for i := 0; i < numElements; i++ {
+	arr := make([]int64, numElements+1)
+	for i := 1; i <= numElements; i++ {
 		fmt.Scan(&arr[i])
 	}
 
-	n := build(arr, 0, numElements-1, nil)
+	tree := build(arr)
 
 	var numOperations int
 	fmt.Scan(&numOperations)
@@ -71,9 +59,9 @@ func main() {
 	for i := 0; i < numOperations; i++ {
 		fmt.Scan(&operation, &a, &b)
 		if operation == "q" {
-			fmt.Println(query(a-1, b-1, n))
+			fmt.Println(tree.query(a, b))
 		} else {
-			update(a-1, int64(b), n)
+			tree.update(a, int64(b))
 		}
 	}
 }
