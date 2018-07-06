@@ -35,7 +35,7 @@ func query(x, y int) {
 	}
 }
 
-func getSize(x int) {
+func printSize(x int) {
 	fmt.Println(size[root(x)])
 }
 
@@ -69,7 +69,7 @@ func main() {
 		} else /* S */ {
 			var x int
 			fmt.Scan(&x)
-			getSize(x)
+			printSize(x)
 		}
 	}
 }
