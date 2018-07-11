@@ -2,57 +2,39 @@ package main
 
 import "fmt"
 
-type lcskey struct {
-	a string
-	b string
+func lcs(a string, b string) int {
+	la, lb := len(a), len(b)
+	dp := make([][]int, lb+1)
+	for y := 0; y < lb+1; y++ {
+		dp[y] = make([]int, la+1)
+	}
+
+	for y := 1; y <= lb; y++ {
+		for x := 1; x <= la; x++ {
+			if a[x-1] == b[y-1] {
+				dp[y][x] = 1 + dp[y-1][x-1]
+			} else {
+				dp[y][x] = dp[y-1][x]
+				if dp[y][x-1] > dp[y-1][x] {
+					dp[y][x] = dp[y][x-1]
+				}
+			}
+		}
+	}
+
+	return dp[lb][la]
 }
 
-func makeKey(a string, b string) lcskey {
-	if a < b {
-		return lcskey{a, b}
-	}
-	return lcskey{b, a}
-}
-
-var memo map[lcskey]int
-
-func lcs(a []rune, b []rune) int {
-	key := makeKey(string(a), string(b))
-	if val, ok := memo[key]; ok {
-		return val
-	}
-
-	if len(a) == 0 || len(b) == 0 {
-		memo[key] = 0
-		return 0
-	}
-
-	if a[0] == b[0] {
-		return 1 + lcs(a[1:], b[1:])
-	}
-
-	ra := lcs(a, b[1:])
-	rb := lcs(a[1:], b)
-	if ra > rb {
-		return ra
-	}
-	return rb
-}
-
-func solve(k string) {
-	a := []rune(k)
-
-	var b []rune
-	for i := len(a) - 1; i >= 0; i-- {
-		b = append(b, a[i])
+func solve(a string) {
+	var b string
+	for _, r := range a {
+		b = string(r) + b
 	}
 
 	fmt.Println(len(a) - lcs(a, b))
 }
 
 func main() {
-	memo = make(map[lcskey]int)
-
 	numTests := 0
 	fmt.Scanln(&numTests)
 	for i := 0; i < numTests; i++ {
