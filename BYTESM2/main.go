@@ -6,6 +6,7 @@ func solve(h int, w int, values [][]int) {
 	hh := h + 1
 	ww := w + 2
 	dp := make([][]int, hh)
+
 	dp[0] = make([]int, ww)
 	for y := 1; y < hh; y++ {
 		dp[y] = make([]int, ww)
