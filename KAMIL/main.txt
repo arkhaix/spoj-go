@@ -5,6 +5,8 @@ for{_,e:=Scan(&a)
 if e!=nil{break}
 r:=1
 for _,v:=range a{if v=='T'||v=='L'||v=='D'||v=='F'{r*=2}}
+for _,v:=range a{if v==68||v==70||v==76||v==84{r*=2}}
 for _,v:=range a{for _,x:=range"TLDF"{if v==x{r*=2}}}
 for _,v:=range a{switch v{case 68,70,76,84:r*=2}}
+m:=map[rune]int{68:1,70:1,76:1,84:1};for _,v:=range a{r*=m[v]+1}
 Println(r)}}

@@ -1,7 +1,6 @@
 package main
 import."fmt"
-func main(){a:=""
-for{if _,e:=Scan(&a);e!=nil{break}
-r:=1
-for _,v:=range a{switch v{case 68,70,76,84:r*=2}}
-Println(r)}}
+func main(){for i,a:=0,"";i<10;i++{Scan(&a)
+n:=1
+for _,c:=range a{switch c{case 68,70,76,84:n*=2}}
+Println(n)}}
