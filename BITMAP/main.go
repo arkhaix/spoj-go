@@ -2,18 +2,41 @@ package main
 
 import "fmt"
 
-func visit(n, x int, y int, rows int, cols int, a [][]int) {
-	if x < 0 || x >= cols || y < 0 || y >= rows {
-		return
+type node struct {
+	x, y, v int
+}
+
+func visit(x int, y int, rows int, cols int, a [][]int) {
+	vis := make([][]bool, rows)
+	for i := range vis {
+		vis[i] = make([]bool, cols)
 	}
-	if a[y][x] >= 0 && a[y][x] <= n {
-		return
+	vis[y][x] = true
+
+	queue := []node{node{x, y, 0}}
+	for len(queue) > 0 {
+		n := queue[0]
+		queue = queue[1:]
+		if n.v < a[n.y][n.x] {
+			a[n.y][n.x] = n.v
+			if n.y-1 >= 0 && vis[n.y-1][n.x] == false {
+				vis[n.y-1][n.x] = true
+				queue = append(queue, node{n.x, n.y - 1, n.v + 1})
+			}
+			if n.y+1 < rows && vis[n.y+1][n.x] == false {
+				vis[n.y+1][n.x] = true
+				queue = append(queue, node{n.x, n.y + 1, n.v + 1})
+			}
+			if n.x-1 >= 0 && vis[n.y][n.x-1] == false {
+				vis[n.y][n.x-1] = true
+				queue = append(queue, node{n.x - 1, n.y, n.v + 1})
+			}
+			if n.x+1 < cols && vis[n.y][n.x+1] == false {
+				vis[n.y][n.x+1] = true
+				queue = append(queue, node{n.x + 1, n.y, n.v + 1})
+			}
+		}
 	}
-	a[y][x] = n
-	visit(n+1, x, y-1, rows, cols, a)
-	visit(n+1, x, y+1, rows, cols, a)
-	visit(n+1, x-1, y, rows, cols, a)
-	visit(n+1, x+1, y, rows, cols, a)
 }
 
 func solve(a [][]int, rows int, cols int) {
@@ -21,7 +44,7 @@ func solve(a [][]int, rows int, cols int) {
 		for x := 0; x < cols; x++ {
 			if a[y][x] == 0 {
 				a[y][x] = 1
-				visit(0, x, y, rows, cols, a)
+				visit(x, y, rows, cols, a)
 			}
 		}
 	}
@@ -53,7 +76,7 @@ func main() {
 			fmt.Scanln(&s)
 			for x := 0; x < cols; x++ {
 				if s[x] == '0' {
-					a[y][x] = -1
+					a[y][x] = 1000000000
 				}
 			}
 		}
