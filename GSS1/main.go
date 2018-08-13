@@ -12,9 +12,9 @@ func build(a []int, i int, j int) *node {
 	n := node{}
 	n.li = i
 	n.ri = j
-	for i := 0; i <= j; i++ {
-		if a[i] > n.v {
-			n.v = a[i]
+	for m := i; m <= j; m++ {
+		if a[m] > n.v {
+			n.v = a[m]
 		}
 	}
 	if j-i > 0 {
